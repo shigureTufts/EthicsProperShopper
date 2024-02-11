@@ -22,18 +22,14 @@ class QLAgent:
 
         transformed_state = [int(s / granularity) * granularity for s in state]
         return tuple(transformed_state)
-        
+
+    def get_state_key(self, state):
+        # Define how to generate a unique key for the state representation
+        state_key = str(state)
+        return state_key
     def learning(self, action, rwd, state, next_state):
         # implement the Q-learning function
-        state = self.trans(state)
-        next_state = self.trans(next_state)
-        if state not in self.qtable.index:
-            self.qtable.loc[state] = [0] * self.action_space
-        if next_state not in self.qtable.index:
-            self.qtable.loc[next_state] = [0] * self.action_space
-        q_predict = self.qtable.loc[state, action]
-        q_target = rwd + self.gamma * self.qtable.loc[next_state, :].max()
-        self.qtable.loc[state, action] += self.alpha * (q_target - q_predict)
+        pass
 
     def choose_action(self, state):
         # implement the action selection for the fully trained agent

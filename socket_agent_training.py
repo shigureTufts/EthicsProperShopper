@@ -34,10 +34,25 @@ def euclidean_distance(pos1, pos2):
 def calculate_reward(previous_state, current_state):
     # design your own reward function here
     # You should design a function to calculate the reward for the agent to guide the agent to do the desired task
-    pass
+    agent_position = current_state['observation']['players'][0]['position']
+    cart_position = cart_pos_left
+    # Calculate the distance between the agent and the cart
+    distance_to_cart_current = euclidean_distance(agent_position, cart_position)
+
+    if previous_state['observation'] is not None:
+        distance_to_cart_previous = distance_to_cart(previous_state)
+    else:
+        distance_to_cart_previous = 100
+    # Check if the agent has reached the exit
+    # Design reward based on the distance to the cart and whether the agent reached the exit
+    if distance_to_cart_current < distance_to_cart_previous:
+        rwd = 1  # Reward for reaching the exit
+    else:
+        rwd = -1  # Small negative reward for moving away from the cart
+
+    return rwd
 
 if __name__ == "__main__":
-    
 
     action_commands = ['NOP', 'NORTH', 'SOUTH', 'EAST', 'WEST', 'TOGGLE_CART', 'INTERACT', 'RESET']
     # Initialize Q-learning agent
