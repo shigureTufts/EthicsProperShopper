@@ -4,6 +4,13 @@ import torch
 import torch.nn.functional as F
 import json  # Import json for dictionary serialization
 
+
+def get_state_key(state):
+    # Define how to generate a unique key for the state representation
+    state_key = str(state)
+    return state_key
+
+
 class QLAgent:
     # here are some default parameters, you can use different ones
     def __init__(self, action_space, alpha=0.5, gamma=0.8, epsilon=0.1, mini_epsilon=0.01, decay=0.999):
@@ -23,13 +30,20 @@ class QLAgent:
         transformed_state = [int(s / granularity) * granularity for s in state]
         return tuple(transformed_state)
 
-    def get_state_key(self, state):
-        # Define how to generate a unique key for the state representation
-        state_key = str(state)
-        return state_key
     def learning(self, action, rwd, state, next_state):
         # implement the Q-learning function
-        pass
+        state_key = get_state_key(state)
+        next_state_key = get_state_key(next_state)
+
+        if state_key not in self.qtable.index:
+            self.qtable.loc[state_key] = [0] * self.action_space
+
+        if next_state_key not in self.qtable.index:
+            self.qtable.loc[next_state_key] = [0] * self.action_space
+
+        max_next = self.qtable.loc[next_state_key, :].max()
+        self.qtable.loc[state_key, action] += self.alpha * (
+                    rwd + self.gamma * max_next - self.qtable.loc[state_key, action])
 
     def choose_action(self, state):
         # implement the action selection for the fully trained agent
