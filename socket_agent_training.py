@@ -49,7 +49,7 @@ def calculate_reward(previous_state, current_state):
         if distance_to_cart_current < distance_to_cart_previous:
             rwd = 10   # reward for reaching the cart
         elif distance_to_cart_current > distance_to_cart_previous:
-            rwd = -10  # negative reward for moving away from the cart
+            rwd = -50  # negative reward for moving away from the cart
         else:
             rwd = -1   # small negative reward for no progress
 
@@ -62,9 +62,9 @@ def calculate_reward(previous_state, current_state):
         if distance_to_exit_current < distance_to_exit_previous:
             rwd = 10   # reward for reaching the exit
         elif distance_to_exit_current > distance_to_exit_previous:
-            rwd = -10  # negative reward for moving away from exit
+            rwd = -50  # negative reward for moving away from exit
         elif cart_state == -1:
-            rwd = -20  # negative reward for let go of cart
+            rwd = -100  # negative reward for let go of cart
         else:
             rwd = -1   # small negative reward for no progress
     else:
