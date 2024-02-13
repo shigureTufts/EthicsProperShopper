@@ -64,7 +64,7 @@ def calculate_reward(previous_state, current_state):
         elif distance_to_exit_current > distance_to_exit_previous:
             rwd = -50  # negative reward for moving away from exit
         elif cart_state == -1:
-            rwd = -100  # negative reward for let go of cart
+            rwd = -500  # negative reward for let go of cart
         else:
             rwd = -1   # small negative reward for no progress
     else:
@@ -79,16 +79,13 @@ def update_qtable(state, qvalue, action_value):
             if state == line:
                 print(line)
                 line[1] = arr_qvalue
-
-    for i in arr_qvalue:
-        if i == action_value:
-            arr_qvalue[i] = qvalue
-        else:
-            pass
+        for i in arr_qvalue:
+            if i == action_value:
+                arr_qvalue[i] = qvalue
+            else:
+                pass
     out = open("qtable_test.txt", 'w')
     out.writelines(arr_qvalue)
-    out.close()
-
 def state_encode(x_pos, y_pos, cart):
     # encode the coordinate and cart state into numbers
     x = round(x_pos, 1)
@@ -162,7 +159,6 @@ if __name__ == "__main__":
             state = next_state
             update_qtable(encode_state, reward, action_index)
             # agent.qtable.to_json('qtable.json')
-
             if cnt > episode_length:
                 break
         # Additional code for end of episode if needed

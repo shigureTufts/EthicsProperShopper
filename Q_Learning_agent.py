@@ -13,7 +13,7 @@ class QLAgent:
         self.epsilon = epsilon  # exploit vs. explore probability
         self.mini_epsilon = mini_epsilon  # threshold for stopping the decay
         self.decay = decay  # value to decay the epsilon over time
-        self.qtable = self.save_qtable()  # generate the initial table
+        self.qtable = self.generate_qtable()  # generate the initial table
 
     def trans(self, state, granularity=0.2):
         # You should design a function to transform the huge state into a learnable state for the agent
@@ -57,11 +57,13 @@ class QLAgent:
         else:
             # Choose the action with the highest Q-value
             state = self.trans(state)
-            if state not in self.qtable[state]:
+            if state not in self.qtable:
                 # If state not encountered before, choose a random action
-                action = self.high_q(state)
-            else:
+                print("state not found")
                 action = np.random.choice(self.action_space)
+            else:
+                print(state)
+                action = self.high_q(state)
         return action
 
     def high_q(self, state):
@@ -70,10 +72,9 @@ class QLAgent:
         for i in range(self.action_space):
             temp_q = self.qtable[state][i]
             q_value.append(temp_q)
-        print(q_value)
         return np.argmax(q_value)
 
-    def save_qtable(self):
+    def generate_qtable(self):
         # I decided to write my own safe q table function
         # This method is written with Talha
         qtable = {}
@@ -95,8 +96,9 @@ class QLAgent:
             x = x + granularity
 
         file = open("qtable_test.txt", "w")
-        for k, v in qtable.items():
-            file.writelines(f'{k} {v[0]} {v[1]} {v[2]} {v[3]} {v[4]} {v[5]} {v[6]} {v[7]}\n')
+        for key, val in qtable.items():
+            file.writelines(f'{key} '
+                            f'{val[0]} {val[1]} {val[2]} {val[3]} {val[4]} {val[5]} {val[6]} {val[7]}\n')
         return qtable
 
     def state_encode(self, x_pos, y_pos, cart):
