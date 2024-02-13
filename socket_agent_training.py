@@ -71,6 +71,35 @@ def calculate_reward(previous_state, current_state):
         rwd = 0
     return rwd
 
+def update_qtable(state, qvalue, action_value):
+    arr_qvalue = []
+    with open("qtable_test.txt") as search:
+        for line in search:
+            line = line.rstrip()  # remove '\n' at end of line
+            if state == line:
+                print(line)
+                line[1] = arr_qvalue
+
+    for i in arr_qvalue:
+        if i == action_value:
+            arr_qvalue[i] = qvalue
+        else:
+            pass
+    out = open("qtable_test.txt", 'w')
+    out.writelines(arr_qvalue)
+    out.close()
+
+def state_encode(x_pos, y_pos, cart):
+    # encode the coordinate and cart state into numbers
+    x = round(x_pos, 1)
+    y = round(y_pos, 1)
+    encode = round(x * 100000 + y * 100)
+    if cart == 1:
+        encode = round(encode + 1)
+    elif cart == -1:
+        pass
+    return encode
+
 if __name__ == "__main__":
 
     action_commands = ['NOP', 'NORTH', 'SOUTH', 'EAST', 'WEST', 'TOGGLE_CART', 'INTERACT', 'RESET']
@@ -116,10 +145,23 @@ if __name__ == "__main__":
             print("------------------------------------------")
             # Update Q-table
             agent.learning(action_index, reward, state, next_state)
+            if state['observation'] is not None:
+                x_pos = state['observation']['players'][0]['position'][0]
+                y_pos = state['observation']['players'][0]['position'][0]
+                curr_cart = state['observation']['players'][0]['curr_cart']
+            else:
+                # Set initial condition
+                x_pos = 1
+                y_pos = 13
+                curr_cart = -1
+
+            # Encode the state
+            encode_state = state_encode(x_pos, y_pos, curr_cart)
 
             # Update state
             state = next_state
-            agent.qtable.to_json('qtable.json')
+            update_qtable(encode_state, reward, action_index)
+            # agent.qtable.to_json('qtable.json')
 
             if cnt > episode_length:
                 break
